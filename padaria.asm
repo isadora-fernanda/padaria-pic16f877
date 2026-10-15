@@ -10,17 +10,17 @@
 ;			multiplicadas e, ao apertar o igual, aparece o valor a ser pago.
 ;			O valor a ser pago e armazenado na memoria EEPROM, e pode ser obtido atraves do B1.
 ;			A quantidade de cada opcao e o preco podem ser vistos ao apertar o B2.
-;			O 'resistor' da divisor de tensao do B1 e um potenciometro, assim, ao aumentar ou
+;			O 'resistor' do divisor de tensao do B1 e um potenciometro, assim, ao aumentar ou
 ;			diminuir a resistencia, o brilho do LED atrelado ao B1 muda.
 ;			O potenciometro esta conectado a um osciloscopio, que recebe a conversao A/D da
 ;			resistencia.
 ;*---------------------------------------------------------------------------------------------*
 
 
-; ARQUIVO PIC16F788 INCLUIDO NO PROJETO
+; ARQUIVO PIC16F877 INCLUIDO NO PROJETO
 #include <P16F877.INC>
 
-; CONFIGURACOES INICIAIS DO PIC16F788
+; CONFIGURACOES INICIAIS DO PIC16F877
 __config _XT_OSC & _WDT_OFF & _LVP_OFF & _DEBUG_ON & _BODEN_OFF
 
 ; CRIACAO DE QUATRO MACROS, SELECIONANDO O BANK 0, BANK 1, BANK 2 E BANK 3
@@ -114,7 +114,7 @@ BANK3	macro
 	btfss PIR1, ADIF			; Testa a flag que indica finalizacao da conversao A/D
 	goto SAI_INT				; Se flag ADIF = 0, nao finalizou a conversao A/D
 	MOVFW ADRESH				; Move o conteudo (8 bits mais significativos) obtido da conversão A/D para W
-	MOVWF CCPR1L				; Move W para CCPR1L que seta o Duty Cicle
+	MOVWF CCPR1L				; Move W para CCPR1L que seta o Duty Cycle
 	bcf PIR1, ADIF				; Limpa a flag que indica finalizacao da conversao A/D
 
 ; Rotina de saida da interrupcao, recuperacao do conteudo de W e STATUS
@@ -139,7 +139,7 @@ DELAY2:
 	MOVWF	TEMP2
 	call	DELAY
 	decfsz	TEMP2									; Se igual a 0, pula uma linha
-	goto	$-.2									; Retorna a linha anteanterior
+	goto	$-.2									; Retorna duas linhas
 return
 
 DELAY3:
@@ -147,7 +147,7 @@ DELAY3:
 	MOVWF	TEMP3
 	call	DELAY2
 	decfsz	TEMP3									; Se igual a 0, pula uma linha
-	goto	$-.2									; Retorna a linha anteanterior
+	goto	$-.2									; Retorna duas linhas
 return
 
 DELAY4:
@@ -155,7 +155,7 @@ DELAY4:
 	MOVWF	TEMP4
 	call	DELAY3
 	decfsz	TEMP4									; Se igual a 0, pula uma linha
-	goto	$-.2									; Retorna a linha anteanterior
+	goto	$-.2									; Retorna duas linhas
 return
 
 ; ROTINA PARA ENVIAR INSTRUCAO PARA O LCD
@@ -169,7 +169,7 @@ return
 ; ROTINA PARA ENVIAR DADOS PARA O LCD
 LCD_CARACTER:
 	bsf		RS			; Seleciona para dado
-	MOVWF	DISPLAY		; Move caracter para o display
+	MOVWF	DISPLAY		; Move caractere para o display
 	call	ENABLE		; Manda um pulso
 	call	DELAY2		; Espera um tempo
 return
@@ -546,7 +546,7 @@ BANK0												; Seleciona o Bank 0 de memoria de dados
 
 BANK2												; Seleciona o Bank 2 de memoria de dados
 
-	MOVWF	EEDATA									; Move o dado a ser escrio para o registrador EEDATA
+	MOVWF	EEDATA									; Move o dado a ser escrito para o registrador EEDATA
 
 BANK3												; Seleciona o Bank 3 de memoria de dados
 
@@ -650,7 +650,7 @@ LIMPA_RAM:
 	MOVWF PORTC					; Inicia com linhas do teclado desabilitadas
 
 BANK3 ; Seleciona o Bank 3 de memoria de dados
-	bcf EECON1, WRERR			; Bit WRERR deve ser limpo apo o RESET
+	bcf EECON1, WRERR			; Bit WRERR deve ser limpo apos o RESET
 BANK0 ; Seleciona o Bank 0 de memoria de dados
 
 	MOVLW 0X01					; Move literal para W
